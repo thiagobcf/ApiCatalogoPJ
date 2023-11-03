@@ -16,7 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(Options => Options.UseMySql(connecti
 
 var app = builder.Build();
 // endpoints
-app.MapGet("/", () => "Catalogo de Produtos");
+app.MapGet("/", () => "Catalogo de Produtos").ExcludeFromDescription();
 
 app.MapPost("/categorias", async (Categoria categoria, AppDbContext db) =>
 {
@@ -35,7 +35,8 @@ app.MapGet("/categorias/{id:int}", async(int id,AppDbContext db) => {
     : Results.NotFound();
 });
 
-app.MapPut("/categorias/{id:int}", async(int id, Categoria categoria, AppDbContext db) => {
+app.MapPut("/categorias/{id:int}", async(int id, Categoria categoria, AppDbContext db) =>
+{
     if (categoria.CategoriaId != id)
     {
         return Results.BadRequest();
@@ -50,7 +51,22 @@ app.MapPut("/categorias/{id:int}", async(int id, Categoria categoria, AppDbConte
     await db.SaveChangesAsync();
     return Results.Ok(categoriaDB);
 });
-   
+
+app.MapDelete("/categorias/{id:int}", async(int id, AppDbContext db) =>
+{
+    var categoria = await db.Categorias.FindAsync(id);
+
+    if (categoria is null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Categorias.Remove(categoria);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+
 
 
 // Configure the HTTP request pipeline.
