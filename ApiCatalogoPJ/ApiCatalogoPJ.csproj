@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ApiEndpoints/" />
     <Folder Include="Context/" />
     <Folder Include="Services/" />
   </ItemGroup>
