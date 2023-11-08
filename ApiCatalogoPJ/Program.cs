@@ -1,5 +1,6 @@
 using ApiCatalogo.Services;
 using ApiCatalogoPJ.ApiEndpoints;
+using ApiCatalogoPJ.AppServicesExtensions;
 using ApiCatalogoPJ.Context;
 using ApiCatalogoPJ.Models;
 using ApiCatalogoPJ.Services;
@@ -77,16 +78,17 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.//Configure
+
 app.MapAutenticacaoEndpoints();
 app.MapCategoriasEndpoints();
 app.MapProdutosEndpoints();
 
-// Configure the HTTP request pipeline.//Configure
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+var environment = app.Environment;
+
+app.UseExceptionHandling(environment)
+    .UseSwaggerMiddleware()
+    .UseAppCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
